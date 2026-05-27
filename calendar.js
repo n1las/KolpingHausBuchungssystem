@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const testEvents = [];
     let itemId = 1;
 
+    // --- TAG 0 (Heute) - Behalte die Original-Daten ---
     const start = new Date(today);
     start.setHours(10, 0, 0, 0); // All start at 10:00
 
@@ -37,6 +38,60 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
+    // Hilfsfunktion: Fügt einen Termin für einen Raum an einem bestimmten Tag hinzu
+    function addTestEvent(title, dayOffset, startHour, endHour, room) {
+        const eventStart = new Date(today);
+        eventStart.setDate(today.getDate() + dayOffset);
+        eventStart.setHours(startHour, 0, 0, 0);
+
+        const eventEnd = new Date(today);
+        eventEnd.setDate(today.getDate() + dayOffset);
+        eventEnd.setHours(endHour, 0, 0, 0);
+
+        testEvents.push({
+            id: itemId++,
+            title: title,
+            start: eventStart,
+            end: eventEnd,
+            extendedProps: {
+                room: room // Speichert den Raum für das Modal
+            }
+        });
+    }
+
+    // --- TAG 1 (Morgen) ---
+    // 3 Termine gleichzeitig, danach 2 Termine gleichzeitig
+    addTestEvent("Konferenz Vormittag", 1, 9, 13, 'Hauptsaal');
+    addTestEvent("Konferenz Vormittag", 1, 9, 13, 'Foyer');
+    addTestEvent("Konferenz Vormittag", 1, 9, 13, 'Galerie');
+    addTestEvent("Workshop Nachmittag", 1, 14, 18, 'Kolpingzimmer');
+    addTestEvent("Workshop Nachmittag", 1, 14, 18, 'Gaalberstube');
+
+    // --- TAG 2 ---
+    addTestEvent("Vereinsfeier", 2, 17, 22, 'Gastätte');
+    addTestEvent("Vereinsfeier", 2, 17, 22, 'Wintergarten');
+    addTestEvent("Kegelturnier", 2, 18, 22, 'Kegelbahn 1');
+    addTestEvent("Kegelturnier", 2, 18, 22, 'Kegelbahn 2');
+
+    // --- TAG 3 ---
+    addTestEvent("Große Firmenfeier", 3, 14, 22, 'Hauptsaal');
+    addTestEvent("Große Firmenfeier", 3, 14, 22, 'Foyer');
+    addTestEvent("Große Firmenfeier", 3, 14, 22, 'Gastätte');
+    addTestEvent("Große Firmenfeier", 3, 14, 22, 'Wintergarten');
+
+    // --- TAG 4 bis 6 ---
+    addTestEvent("Schulung", 4, 8, 16, 'Landernau');
+    addTestEvent("Schulung", 4, 8, 16, 'Neustädt');
+    addTestEvent("Vorstandssitzung", 4, 18, 20, ['Hessisches Kegelspiel']);
+    addTestEvent("Hochzeit", 5, 12, 22, 'Hauptsaal');
+    addTestEvent("Hochzeit", 5, 12, 22, 'Foyer');
+    addTestEvent("Hochzeit", 5, 12, 22, 'Gastätte');
+    addTestEvent("Kinderbetreuung", 5, 14, 19, ['Kolpingzimmer']);
+    addTestEvent("Frühschoppen", 6, 10, 14, 'Gastätte');
+    addTestEvent("Frühschoppen", 6, 10, 14, 'Wintergarten');
+    addTestEvent("Ausstellung", 6, 10, 18, 'Galerie');
+    addTestEvent("Ausstellung", 6, 10, 18, 'Foyer');
 
     const calendar = new FullCalendar.Calendar(calendarEl, {
         locale: 'de',
