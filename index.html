@@ -29,6 +29,56 @@
 
 </div>
 
+<!-- Modal für Termin-Details -->
+<div id="termin-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <h2>Termin Details</h2>
+        <form id="termin-form">
+            <div class="form-group">
+                <label>Raum:</label>
+                <select id="termin-raum" disabled></select>
+            </div>
+            <div class="form-group">
+                <label>Anfang:</label>
+                <input type="datetime-local" id="termin-anfang" disabled>
+            </div>
+            <div class="form-group">
+                <label>Ende:</label>
+                <input type="datetime-local" id="termin-ende" disabled>
+            </div>
+            <div class="form-group">
+                <label>Bestuhlung:</label>
+                <select id="termin-bestuhlung" disabled>
+                    <option value="Standard">Standard</option>
+                    <option value="U-Form">U-Form</option>
+                    <option value="Kino">Kino</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Notizen:</label>
+                <textarea id="termin-notizen" rows="4" disabled></textarea>
+            </div>
+            <div class="form-group">
+                <label>Mieter:</label>
+                <input type="text" id="termin-mieter" disabled>
+            </div>
+            <div class="form-group">
+                <label>Personenanzahl:</label>
+                <input type="number" id="termin-personenanzahl" disabled>
+            </div>
+            <div class="form-group checkbox-group">
+                <input type="checkbox" id="termin-serientermin" disabled>
+                <label for="termin-serientermin">Serientermin</label>
+            </div>
+            <div class="form-actions">
+                <button type="button" id="btn-bearbeiten">Bearbeiten</button>
+                <button type="button" id="btn-speichern" style="display: none;">Speichern</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script src="script.js"></script>
 <script src="calendar.js"></script>
 
