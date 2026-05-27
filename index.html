@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gebäude-Buchungssystem</title>
+    <!-- Hier verknüpfen wir dein CSS -->
+    <!-- FullCalendar Standard Library -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.11/locales-all.global.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="screen-layout">
+
+    <!-- LINKE SEITE: HIER LANDET DEIN PLAN -->
+    <div class="linke-haelfte">
+
+     <object id="mein-plan" data="gebaeudeplan.svg" type="image/svg+xml" width="100%" height="100%"></object>
+
+    </div>
+
+    <!-- RECHTE SEITE: FÜR DEINE SPÄTEREN BUCHUNGS-FUNKTIONEN -->
+    <div class="rechte-haelfte">
+        <h2 id="info-titel" style="margin-top: 0; font-size: 1.2em; color: #333;">current chosen room: None</h2>
+        <div id="calendar"></div>
+    </div>
+
+</div>
+
+<script src="script.js"></script>
+<script src="calendar.js"></script>
+
+</body>
+</html>
