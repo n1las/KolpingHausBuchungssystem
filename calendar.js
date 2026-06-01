@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Generate test events for a "regular busy day" mapped to standard FullCalendar events
     const testEvents = [];
     let itemId = 1;
+    let currentEvent = null;
 
     // --- TAG 0 (Heute) - Behalte die Original-Daten ---
     const start = new Date(today);
@@ -127,6 +128,7 @@ document.addEventListener('DOMContentLoaded', function() {
             };
         },
         eventClick: function(info) {
+            currentEvent = info.event;
             const modal = document.getElementById('termin-modal');
             modal.style.display = 'block';
 
@@ -262,23 +264,50 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const fontSize = 12; // px
             const lineHeightEm = 1.2;
-            const totalTextHeight = events.length * fontSize * lineHeightEm;
-
-            const startY = rectBbox.y + (rectBbox.height - totalTextHeight) / 2;
-            textEl.setAttribute('y', startY);
-
+            const maxWidth = Math.max(0, rectBbox.width - 8); // 8px padding
             const startX = textEl.getAttribute('x');
+            let totalLines = 0;
 
-            events.forEach((event, index) => {
+            events.forEach((event) => {
                 const startTime = event.start.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
                 const endTime = event.end ? event.end.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) : '';
                 const timeStr = endTime ? `${startTime} - ${endTime}` : startTime;
 
-                const tspan = svgDoc.createElementNS('http://www.w3.org/2000/svg', 'tspan');
-                tspan.setAttribute('x', startX);
+                const fullText = `${timeStr} ${event.title}`;
+                const words = fullText.split(' ');
+
+                let currentLine = words[0];
+                let currentTspan = svgDoc.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+                currentTspan.setAttribute('x', startX);
+                currentTspan.textContent = currentLine;
+                textEl.appendChild(currentTspan);
+                totalLines++;
+
+                for (let i = 1; i < words.length; i++) {
+                    const word = words[i];
+                    currentTspan.textContent = currentLine + ' ' + word;
+
+                    if (currentTspan.getComputedTextLength() > maxWidth) {
+                        currentTspan.textContent = currentLine;
+                        currentLine = word;
+                        currentTspan = svgDoc.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+                        currentTspan.setAttribute('x', startX);
+                        currentTspan.textContent = currentLine;
+                        textEl.appendChild(currentTspan);
+                        totalLines++;
+                    } else {
+                        currentLine += ' ' + word;
+                    }
+                }
+            });
+
+            const totalTextHeight = totalLines * fontSize * lineHeightEm;
+            const startY = rectBbox.y + (rectBbox.height - totalTextHeight) / 2;
+            textEl.setAttribute('y', startY);
+
+            const tspans = textEl.querySelectorAll('tspan');
+            tspans.forEach((tspan, index) => {
                 tspan.setAttribute('dy', index === 0 ? '0' : `${lineHeightEm}em`);
-                tspan.textContent = `${timeStr} ${event.title}`;
-                textEl.appendChild(tspan);
             });
         });
     }
@@ -317,8 +346,52 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     btnSpeichern.onclick = function() {
+        const raum = document.getElementById('termin-raum').value;
+        const anfang = document.getElementById('termin-anfang').value;
+        const ende = document.getElementById('termin-ende').value;
+        const mieter = document.getElementById('termin-mieter').value || 'Neuer Termin';
+
+        if (!raum || !anfang) {
+            alert('Bitte Raum und Startzeit angeben.');
+            return;
+        }
+
+        const startDate = new Date(anfang);
+        const endDate = ende ? new Date(ende) : new Date(startDate.getTime() + 60*60*1000); // 1hr fallback
+
+        if (currentEvent) {
+            currentEvent.setProp('title', mieter);
+            currentEvent.setExtendedProp('room', raum);
+            currentEvent.setDates(startDate, endDate);
+        } else {
+            calendar.addEvent({
+                id: String(itemId++),
+                title: mieter,
+                start: startDate,
+                end: endDate,
+                extendedProps: { room: raum }
+            });
+        }
+
         formInputs.forEach(input => input.disabled = true);
         btnSpeichern.style.display = 'none';
         btnBearbeiten.style.display = 'inline-block';
+        modal.style.display = 'none';
+
+        if (calendar.view) {
+            updateSvgText({ view: calendar.view });
+        }
+    }
+
+    const btnTerminHinzufuegen = document.getElementById('btn-termin-hinzufuegen');
+    if (btnTerminHinzufuegen) {
+        btnTerminHinzufuegen.onclick = function() {
+            currentEvent = null;
+            modal.style.display = 'block';
+            document.getElementById('termin-form').reset();
+            formInputs.forEach(input => input.disabled = false);
+            btnBearbeiten.style.display = 'none';
+            btnSpeichern.style.display = 'inline-block';
+        };
     }
 });
