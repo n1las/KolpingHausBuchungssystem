@@ -1,4 +1,4 @@
-const rooms = ['Kolpingzimmer', 'Gaalberstube', 'Galerie', 'Landernau', 'Neustädt', 'Foyer', 'Gastätte', 'Hessisches Kegelspiel', 'Hauptsaal',
+const rooms = ['Kolpingzimmer', 'Gaalbernstube', 'Galerie', 'Landernau', 'Neustädt', 'Foyer', 'Gastätte', 'Hessisches Kegelspiel', 'Hauptsaal',
     'Wintergarten', 'Kegelbahn 1', 'Kegelbahn 2'];
 document.addEventListener('DOMContentLoaded', function() {
 
@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function() {
     addTestEvent("Konferenz Vormittag", 1, 9, 13, 'Foyer');
     addTestEvent("Konferenz Vormittag", 1, 9, 13, 'Galerie');
     addTestEvent("Workshop Nachmittag", 1, 14, 18, 'Kolpingzimmer');
-    addTestEvent("Workshop Nachmittag", 1, 14, 18, 'Gaalberstube');
+    addTestEvent("Workshop Nachmittag", 1, 14, 18, 'Gaalbernstube');
 
     // --- TAG 2 ---
     addTestEvent("Vereinsfeier", 2, 17, 22, 'Gastätte');
@@ -165,63 +165,45 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!svgObject || !svgObject.contentDocument) return;
         const svgDoc = svgObject.contentDocument;
 
-        const feldToRectMapping = {
-            'Kolpoingzimmer-Feld': 'Kolpingzimmer-Rect',
-            'Gaalberstube-Feld': 'Gaalberstube-Rect',
-            'Galerie-Feld': 'Gallerie-Rect',
-            'Landernau-Feld': 'Landernau-Rect',
-            'Neustadt-Feld': 'Neustadt-Rect',
-            'Foyer-Feld': 'Foyer-Rect',
-            'Gasstaette-Feld': 'Gaststaette-Rect',
-            'HessichesKegelspiel-Feld': 'HessischesKegelspiel-Rect',
-            'Hauptsaal-Feld': 'Hauptsaal-Rect',
-            'Wintergarten-Feld': 'Wintergarten-Rect',
-            'Kegelbahn1-Feld': 'Kegelbahn1-Rect',
-            'Kegelbahn2-Feld': 'Kegelbahn2-Rect'
+        const roomToRectMapping = {
+            'Kolpingzimmer': 'Kolpingzimmer-Rect',
+            'Gaalbernstube': 'Gaalbernstube-Rect',
+            'Galerie': 'Gallerie-Rect',
+            'Landernau': 'Landernau-Rect',
+            'Neustädt': 'Neustadt-Rect',
+            'Foyer': 'Foyer-Rect',
+            'Gastätte': 'Gaststaette-Rect',
+            'Hessisches Kegelspiel': 'HessischesKegelspiel-Rect',
+            'Hauptsaal': 'Hauptsaal-Rect',
+            'Wintergarten': 'Wintergarten-Rect',
+            'Kegelbahn 1': 'Kegelbahn1-Rect',
+            'Kegelbahn 2': 'Kegelbahn2-Rect'
         };
 
-        const roomMapping = {
-            'Kolpingzimmer': 'Kolpoingzimmer-Feld',
-            'Gaalberstube': 'Gaalberstube-Feld',
-            'Galerie': 'Galerie-Feld',
-            'Landernau': 'Landernau-Feld',
-            'Neustädt': 'Neustadt-Feld',
-            'Foyer': 'Foyer-Feld',
-            'Gastätte': 'Gasstaette-Feld',
-            'Hessisches Kegelspiel': 'HessichesKegelspiel-Feld',
-            'Hauptsaal': 'Hauptsaal-Feld',
-            'Wintergarten': 'Wintergarten-Feld',
-            'Kegelbahn 1': 'Kegelbahn1-Feld',
-            'Kegelbahn 2': 'Kegelbahn2-Feld'
-        };
+        // Initialize and clear all new text elements
+        Object.values(roomToRectMapping).forEach(rectId => {
+            const rectEl = svgDoc.getElementById(rectId);
+            if (!rectEl) return;
 
-        // Initialize and clear all text elements
-        Object.values(roomMapping).forEach(feldId => {
-            let feldEl = svgDoc.getElementById(feldId);
-            if (!feldEl) return;
+            const textId = rectId + '-events';
+            let textEl = svgDoc.getElementById(textId);
 
-            // If the element is still a path, replace it dynamically with a text element
-            if (feldEl.tagName.toLowerCase() === 'path') {
-                const rectId = feldToRectMapping[feldId];
-                const rectEl = svgDoc.getElementById(rectId);
-                if (!rectEl) return;
-
+            if (!textEl) {
                 const rectBbox = rectEl.getBBox();
-                const textEl = svgDoc.createElementNS('http://www.w3.org/2000/svg', 'text');
-                textEl.setAttribute('id', feldId);
+                textEl = svgDoc.createElementNS('http://www.w3.org/2000/svg', 'text');
+                textEl.setAttribute('id', textId);
                 textEl.setAttribute('x', rectBbox.x + rectBbox.width / 2);
                 textEl.setAttribute('font-family', 'Arial, sans-serif');
                 textEl.setAttribute('font-size', '12px');
                 textEl.setAttribute('fill', 'black');
                 textEl.setAttribute('text-anchor', 'middle');
                 textEl.setAttribute('dominant-baseline', 'hanging');
-                feldEl.parentNode.replaceChild(textEl, feldEl);
-                feldEl = textEl;
+                rectEl.parentNode.appendChild(textEl);
             }
 
             // Clear content (so nothing is displayed on empty days or week/month views)
-            feldEl.innerHTML = '';
-            feldEl.textContent = '';
+            textEl.innerHTML = '';
+            textEl.textContent = '';
         });
 
         // Only display text for the current day view
@@ -249,14 +231,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Add events to SVG
         Object.keys(eventsByRoom).forEach(room => {
-            const feldId = roomMapping[room];
-            if (!feldId) return;
-            const textEl = svgDoc.getElementById(feldId);
-            if (!textEl) return;
+            const rectId = roomToRectMapping[room];
+            if (!rectId) return;
 
-            const rectId = feldToRectMapping[feldId];
+            const textId = rectId + '-events';
+            const textEl = svgDoc.getElementById(textId);
             const rectEl = svgDoc.getElementById(rectId);
-            if (!rectEl) return;
+            if (!textEl || !rectEl) return;
             const rectBbox = rectEl.getBBox();
 
             const events = eventsByRoom[room];
