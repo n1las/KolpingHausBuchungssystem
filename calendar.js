@@ -316,6 +316,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const svgObject = document.getElementById('mein-plan');
     if (svgObject) {
         svgObject.addEventListener('load', function() {
+            const svgDoc = svgObject.contentDocument;
+            if (svgDoc) {
+                const targetGroup = svgDoc.getElementById('KolpingHaus-BigGruppe');
+                if (targetGroup) {
+                    const bbox = targetGroup.getBBox();
+                    const padding = 10; // Adds a little bit of space around the group
+                    const viewBox = `${bbox.x - padding} ${bbox.y - padding} ${bbox.width + padding * 2} ${bbox.height + padding * 2}`;
+                    svgDoc.documentElement.setAttribute('viewBox', viewBox);
+                }
+            }
+
             if (calendar.view) {
                 updateSvgText({ view: calendar.view });
             }

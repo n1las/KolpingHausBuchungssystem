@@ -15,6 +15,13 @@ body, html {
     padding: 20px;
     display: flex;
     flex-direction: column;
+    justify-content: center; /* Zentriert den Inhalt auf der Y-Achse */
+}
+
+.plan-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Zentriert SVG und Button auf der X-Achse relativ zueinander */
 }
 
 .rechte-haelfte {
@@ -65,6 +72,10 @@ body, html {
 
 .action-btn:hover {
     background-color: #1a497b;
+}
+
+#btn-termin-hinzufuegen {
+    margin-top: 5px; /* Adjust to 0px if you want it completely flush with the SVG */
 }
 
 /* Hebt die Standard-Einstellung von FullCalendar auf, die Texte auf eine Zeile zwingt */
