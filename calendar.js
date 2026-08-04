@@ -21,24 +21,19 @@ document.addEventListener('DOMContentLoaded', function() {
     let itemId = 1;
     let currentEvent = null;
 
-    // --- TAG 0 (Heute) - Behalte die Original-Daten ---
-    const start = new Date(today);
-    start.setHours(10, 0, 0, 0); // All start at 10:00
-
-    const end = new Date(start);
-    end.setHours(12, 0, 0, 0); // All end at 12:00
-
-    for (let i = 1; i <= 12; i++) {
-        testEvents.push({
-            id: itemId++,
-            title: `Termin ${i}`,
-            start: start,
-            end: end,
-            extendedProps: {
-                room: rooms[i - 1] // Jeder Test-Termin bekommt genau einen eindeutigen Raum zugewiesen
-            }
-        });
-    }
+    // --- TAG 0 (Heute) - Alle Räume gleichzeitig belegt (10:00–12:00) ---
+    addTestEvent("Vorstandssitzung Kolpingwerk",  0, 10, 12, 'Kolpingzimmer');
+    addTestEvent("Besprechung Stadtrat",          0, 10, 12, 'Gaalbernstube');
+    addTestEvent("Kunstausstellung Aufbau",       0, 10, 12, 'Galerie');
+    addTestEvent("Erste-Hilfe-Kurs DRK",         0, 10, 12, 'Landernau');
+    addTestEvent("Vereinssitzung Kolpingsfamilie",0, 10, 12, 'Neustädt');
+    addTestEvent("Informationsstand Bürger",      0, 10, 12, 'Foyer');
+    addTestEvent("Mittagstisch Senioren",         0, 10, 12, 'Gastätte');
+    addTestEvent("Trainingsabend SKC",            0, 10, 12, 'Hessisches Kegelspiel');
+    addTestEvent("Chorprobe Liederkranz",         0, 10, 12, 'Hauptsaal');
+    addTestEvent("Kaffeerunde Kolpingsfamilie",   0, 10, 12, 'Wintergarten');
+    addTestEvent("Ligaspiel Kegelclub",           0, 10, 12, 'Kegelbahn 1');
+    addTestEvent("Juniorentraining Kegeln",       0, 10, 12, 'Kegelbahn 2');
 
     // Hilfsfunktion: Fügt einen Termin für einen Raum an einem bestimmten Tag hinzu
     function addTestEvent(title, dayOffset, startHour, endHour, room) {
@@ -89,8 +84,8 @@ document.addEventListener('DOMContentLoaded', function() {
     addTestEvent("Hochzeit", 5, 12, 22, 'Foyer');
     addTestEvent("Hochzeit", 5, 12, 22, 'Gastätte');
     addTestEvent("Kinderbetreuung", 5, 14, 19, ['Kolpingzimmer']);
-    addTestEvent("Frühschoppen", 6, 10, 14, 'Gastätte');
-    addTestEvent("Frühschoppen", 6, 10, 14, 'Wintergarten');
+    addTestEvent("Abschlussfeier", 6, 10, 14, 'Gastätte');
+    addTestEvent("Abschlussfeier", 6, 10, 14, 'Wintergarten');
     addTestEvent("Ausstellung", 6, 10, 18, 'Galerie');
     addTestEvent("Ausstellung", 6, 10, 18, 'Foyer');
 
