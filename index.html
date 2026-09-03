@@ -11,132 +11,275 @@
 </head>
 <body>
 
-<header class="site-header">
-    <div class="header-container">
+    <!-- ==================== LOGIN SCREEN ==================== -->
+    <div id="login-screen" class="login-overlay">
+        <div class="login-card">
+            <div class="login-logo-wrapper">
+                <img src="logo.png" alt="Stadt Hünfeld Logo" class="login-logo">
+            </div>
+            <h2>Gebäude-Buchungssystem</h2>
+            <p class="login-subtitle">Bitte melden Sie sich an</p>
+            <form id="login-form" autocomplete="off">
+                <div class="form-group">
+                    <label for="login-username">Benutzername</label>
+                    <input type="text" id="login-username" placeholder="z.B. tim.mueller" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Passwort</label>
+                    <input type="password" id="login-password" placeholder="Passwort" required>
+                </div>
+                <span id="login-error" class="login-error" style="display:none;">Ungültiger Benutzername oder Passwort.</span>
+                <button type="submit" id="login-btn" class="action-btn login-btn-full">Anmelden</button>
+            </form>
+        </div>
+    </div>
 
-        <div class="logo-wrapper">
-            <img src="logo.png" alt="Stadt Hünfeld Logo" class="logo">
+    <!-- ==================== APP CONTAINER ==================== -->
+    <div id="app-container" style="display:none;">
+
+        <!-- Header -->
+        <header class="site-header">
+            <div class="header-container">
+                <div class="logo-wrapper">
+                    <img src="logo.png" alt="Stadt Hünfeld Logo" class="logo">
+                </div>
+                <nav class="main-nav">
+                    <button class="nav-btn">Bürgerservice &amp; Politik</button>
+                    <button class="nav-btn">Digitaler Service</button>
+                    <button class="nav-btn">Hünfeld – meine Stadt</button>
+                    <button class="nav-btn">Der Standort</button>
+                </nav>
+                <div class="header-actions">
+                    <!-- Activity Bell -->
+                    <div class="activity-wrapper">
+                        <button class="icon-btn" id="btn-activities" title="Aktivitäten">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                                <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                            </svg>
+                            <span class="activity-badge" id="activity-badge" style="display:none;">0</span>
+                        </button>
+                        <div class="activity-dropdown" id="activity-dropdown" style="display:none;">
+                            <h3>Letzte Aktivitäten</h3>
+                            <ul id="activity-list">
+                                <li class="activity-empty">Keine Aktivitäten vorhanden.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Contact Button -->
+                    <button class="icon-btn" title="Kontakt">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                        </svg>
+                    </button>
+
+                    <div class="divider"></div>
+
+                    <!-- User Display / Logout -->
+                    <div class="user-area">
+                        <span id="user-display" class="user-display">Benutzer</span>
+                        <button id="btn-logout" class="logout-btn" title="Abmelden">Abmelden</button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Application Layout -->
+        <div class="screen-layout">
+            <!-- Left Side: Floor Plan -->
+            <div class="linke-haelfte">
+                <div class="plan-container">
+                    <!-- Floor Selection Buttons -->
+                    <div class="floor-buttons">
+                        <button class="floor-btn active" data-floor="all">Alle</button>
+                        <button class="floor-btn" data-floor="og">OG</button>
+                        <button class="floor-btn" data-floor="eg">EG</button>
+                        <button class="floor-btn" data-floor="ug">UG</button>
+                    </div>
+
+                    <!-- SVG Building Plan -->
+                    <object id="mein-plan" data="gebaeudeplan.svg" type="image/svg+xml" style="width: 85%; max-height: 65vh;"></object>
+
+                    <!-- Add Event Button -->
+                    <button id="btn-termin-hinzufuegen" class="action-btn">Termin hinzufügen</button>
+                </div>
+            </div>
+
+            <!-- Right Side: Calendar -->
+            <div class="rechte-haelfte">
+                <!-- Filter Bar -->
+                <div class="filter-bar">
+                    <span class="filter-label">Filter:</span>
+                    <button class="filter-btn active" data-filter="alle">Alle</button>
+                    <button class="filter-btn" data-filter="stadt">
+                        <span class="color-dot stadt"></span> Stadt
+                    </button>
+                    <button class="filter-btn" data-filter="gastro">
+                        <span class="color-dot gastro"></span> Gastro
+                    </button>
+                </div>
+
+                <!-- FullCalendar Container -->
+                <div id="calendar"></div>
+            </div>
         </div>
 
-        <nav class="main-nav">
-            <a href="#" class="nav-btn">Bürgerservice & Politik</a>
-            <a href="#" class="nav-btn">Digitaler Service</a>
-            <a href="#" class="nav-btn">Hünfeld – meine Stadt</a>
-            <a href="#" class="nav-btn">Der Standort</a>
-        </nav>
+        <!-- ==================== EVENT MODAL ==================== -->
+        <div id="termin-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn">&times;</span>
+                <h2>Termin Details</h2>
 
-        <div class="header-actions">
-            <button class="icon-btn" aria-label="Kontakt">
-                <svg viewBox="0 0 24 24" class="header-icon">
-                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
-                    <path d="M9 12l2 2 4-4"></path>
-                </svg>
-            </button>
+                <form id="termin-form">
+                    <!-- Title -->
+                    <div class="form-group">
+                        <label for="termin-title">Veranstaltung / Titel</label>
+                        <input type="text" id="termin-title" placeholder="z.B. Vorstandssitzung" disabled>
+                    </div>
 
-            <button class="icon-btn" aria-label="Benutzer">
-                <svg viewBox="0 0 24 24" class="header-icon">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="12" cy="7" r="4"></circle>
-                    <path d="M16 11l2 2 4-4"></path>
-                </svg>
-            </button>
+                    <!-- Room Selection (Checkboxes grouped by floor) -->
+                    <fieldset class="room-fieldset">
+                        <legend>Räume auswählen</legend>
+                        <div class="room-checkboxes">
+                            <div class="room-floor-group">
+                                <h4>OG – Obergeschoss</h4>
+                                <label class="room-checkbox-label"><input type="checkbox" name="rooms" value="Kolpingzimmer" disabled> Kolpingzimmer</label>
+                                <label class="room-checkbox-label"><input type="checkbox" name="rooms" value="Gaalbernstube" disabled> Gaalbernstube</label>
+                                <label class="room-checkbox-label"><input type="checkbox" name="rooms" value="Galerie" disabled> Galerie</label>
+                            </div>
+                            <div class="room-floor-group">
+                                <h4>EG – Erdgeschoss</h4>
+                                <label class="room-checkbox-label"><input type="checkbox" name="rooms" value="Landernau" disabled> Landernau</label>
+                                <label class="room-checkbox-label"><input type="checkbox" name="rooms" value="Neustadt" disabled> Neustadt</label>
+                                <label class="room-checkbox-label"><input type="checkbox" name="rooms" value="Foyer" disabled> Foyer</label>
+                                <label class="room-checkbox-label"><input type="checkbox" name="rooms" value="Gaststätte" disabled> Gaststätte</label>
+                                <label class="room-checkbox-label"><input type="checkbox" name="rooms" value="Hessisches Kegelspiel" disabled> Hessisches Kegelspiel</label>
+                                <label class="room-checkbox-label"><input type="checkbox" name="rooms" value="Hauptsaal" disabled> Hauptsaal</label>
+                                <label class="room-checkbox-label"><input type="checkbox" name="rooms" value="Wintergarten" disabled> Wintergarten</label>
+                            </div>
+                            <div class="room-floor-group">
+                                <h4>UG – Untergeschoss</h4>
+                                <label class="room-checkbox-label"><input type="checkbox" name="rooms" value="Kegelbahn 1" disabled> Kegelbahn 1</label>
+                                <label class="room-checkbox-label"><input type="checkbox" name="rooms" value="Kegelbahn 2" disabled> Kegelbahn 2</label>
+                            </div>
+                        </div>
+                    </fieldset>
 
-            <div class="divider"></div>
+                    <!-- Date/Time -->
+                    <div class="form-row">
+                        <div class="form-group form-group-half">
+                            <label for="termin-anfang">Anfang</label>
+                            <input type="datetime-local" id="termin-anfang" disabled>
+                        </div>
+                        <div class="form-group form-group-half">
+                            <label for="termin-ende">Ende</label>
+                            <input type="datetime-local" id="termin-ende" disabled>
+                        </div>
+                    </div>
 
-            <button class="search-btn" aria-label="Suche">
-                <svg viewBox="0 0 24 24" class="search-icon">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                </svg>
-            </button>
+                    <!-- Ansprechpartner Section -->
+                    <fieldset class="contact-fieldset">
+                        <legend>Ansprechpartner</legend>
+                        <div class="form-group">
+                            <label for="termin-ansprechpartner">Name</label>
+                            <input type="text" id="termin-ansprechpartner" placeholder="Name des Ansprechpartners" disabled>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group form-group-half">
+                                <label for="termin-email">E-Mail</label>
+                                <input type="email" id="termin-email" placeholder="email@beispiel.de" disabled>
+                            </div>
+                            <div class="form-group form-group-half">
+                                <label for="termin-telefon">Telefon</label>
+                                <input type="tel" id="termin-telefon" placeholder="0661-12345" disabled>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <!-- Details Row -->
+                    <div class="form-row">
+                        <div class="form-group form-group-half">
+                            <label for="termin-bestuhlung">Bestuhlung</label>
+                            <select id="termin-bestuhlung" disabled>
+                                <option value="Standard">Standard</option>
+                                <option value="U-Form">U-Form</option>
+                                <option value="Kino">Kino</option>
+                            </select>
+                        </div>
+                        <div class="form-group form-group-half">
+                            <label for="termin-personenanzahl">Personenanzahl</label>
+                            <input type="number" id="termin-personenanzahl" min="1" disabled>
+                        </div>
+                    </div>
+
+                    <!-- Vertrag Section -->
+                    <fieldset class="vertrag-fieldset">
+                        <legend>Vertrag</legend>
+                        <div class="form-row vertrag-row">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="termin-vertrag-checkbox" disabled>
+                                <label for="termin-vertrag-checkbox">Vertrag vorhanden</label>
+                            </div>
+                            <div class="form-group form-group-half">
+                                <label for="termin-vertrag-status">Status</label>
+                                <select id="termin-vertrag-status" disabled>
+                                    <option value="">— Bitte wählen —</option>
+                                    <option value="erstellt">Erstellt</option>
+                                    <option value="gesendet">Gesendet</option>
+                                    <option value="unterschrieben">Unterschrieben</option>
+                                </select>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <!-- Notes -->
+                    <div class="form-group">
+                        <label for="termin-notizen">Notizen</label>
+                        <textarea id="termin-notizen" rows="3" placeholder="Zusätzliche Hinweise..." disabled></textarea>
+                    </div>
+
+                    <!-- Serientermin -->
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="termin-serientermin" disabled>
+                        <label for="termin-serientermin">Serientermin</label>
+                    </div>
+
+                    <!-- Meta Info (read-only) -->
+                    <div class="meta-info" id="meta-info-section" style="display:none;">
+                        <p>Erstellt von: <strong id="termin-erstellt-von">—</strong></p>
+                        <p>Erstellt am: <strong id="termin-erstellt-am">—</strong></p>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="form-actions">
+                        <button type="button" id="btn-loeschen" class="btn-delete" style="display:none;">Löschen</button>
+                        <div class="form-actions-right">
+                            <button type="button" id="btn-bearbeiten" class="action-btn">Bearbeiten</button>
+                            <button type="button" id="btn-speichern" class="action-btn" style="display:none;">Speichern</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
 
-    </div>
-</header>
+        <!-- Footer -->
+        <footer>
+            <p>Impressum:</p>
+            <p>Mustermann GmbH | Beispielstraße 123 | 12345 Musterstadt | Tel: 01234-56789 | Email: info@mustermann.de</p>
+        </footer>
 
-<div class="screen-layout">
+    </div><!-- /app-container -->
 
-    <!-- LINKE SEITE: HIER LANDET DEIN PLAN -->
-    <div class="linke-haelfte">
-
-        <div class="plan-container">
-            <object id="mein-plan" data="gebaeudeplan.svg" type="image/svg+xml" style="width: 85%; max-height: 65vh;"></object>
-            <button id="btn-termin-hinzufuegen" class="action-btn">Termin hinzufügen</button>
-        </div>
-
-    </div>
-
-    <!-- RECHTE SEITE: FÜR DEINE SPÄTEREN BUCHUNGS-FUNKTIONEN -->
-    <div class="rechte-haelfte">
-
-        <div id="calendar"></div>
-    </div>
-
-</div>
-
-<!-- Modal für Termin-Details -->
-<div id="termin-modal" class="modal">
-    <div class="modal-content">
-        <span class="close-btn">&times;</span>
-        <h2>Termin Details</h2>
-        <form id="termin-form">
-            <div class="form-group">
-                <label>Raum:</label>
-                <select id="termin-raum" disabled></select>
-            </div>
-            <div class="form-group">
-                <label>Anfang:</label>
-                <input type="datetime-local" id="termin-anfang" disabled>
-            </div>
-            <div class="form-group">
-                <label>Ende:</label>
-                <input type="datetime-local" id="termin-ende" disabled>
-            </div>
-            <div class="form-group">
-                <label>Bestuhlung:</label>
-                <select id="termin-bestuhlung" disabled>
-                    <option value="Standard">Standard</option>
-                    <option value="U-Form">U-Form</option>
-                    <option value="Kino">Kino</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Notizen:</label>
-                <textarea id="termin-notizen" rows="4" disabled></textarea>
-            </div>
-            <div class="form-group">
-                <label>Mieter:</label>
-                <input type="text" id="termin-mieter" disabled>
-            </div>
-            <div class="form-group">
-                <label>Personenanzahl:</label>
-                <input type="number" id="termin-personenanzahl" disabled>
-            </div>
-            <div class="form-group checkbox-group">
-                <input type="checkbox" id="termin-serientermin" disabled>
-                <label for="termin-serientermin">Serientermin</label>
-            </div>
-            <div class="form-actions">
-                <button type="button" id="btn-bearbeiten">Bearbeiten</button>
-                <button type="button" id="btn-speichern" style="display: none;">Speichern</button>
-            </div>
-        </form>
-    </div>
-</div>
-  <footer>
-    <div class="footer">
-        <p>Impressung:</p>
-        <p>Mustermann GmbH</p>
-        <p>Beispielstraße 123</p>
-        <p>12345 Musterstadt</p>
-        <p>Deutschland</p>
-        <p>Telefon: 01234 567890</p>
-        <p>Email: info@mustermann.de</p>
-    </div>
-</footer>
-
-<script src="script.js"></script>
-<script src="calendar.js"></script>
+    <!-- Scripts (modular, in dependency order) -->
+    <script src="js/store.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/activity.js"></script>
+    <script src="js/filter.js"></script>
+    <script src="js/svg-renderer.js"></script>
+    <script src="js/modal.js"></script>
+    <script src="js/calendar-manager.js"></script>
+    <script src="js/app.js"></script>
 
 </body>
 </html>

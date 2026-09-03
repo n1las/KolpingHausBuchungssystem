@@ -1,75 +1,46 @@
-# Plan: Verbesserung der Testdaten in `calendar.js`
+# Situation
 
-## Analyse des bestehenden Codes
+Das hier ist ein Protoyp von einer Website für einer meiner Kunden der muss jetzt weiterentwickelt werden und auf neuere Anfroderungen angepasst werden, er sollte aber später erweiterbar sein damit man damit dann eine richtige Webaplikation mit Frontend und Backend draus machen kann gerade reicht es aber wenn sie aus JS html css etc besteht.
 
-### Problem
-In `calendar.js` (Zeilen 31–41) wird für **TAG 0 (Heute)** eine `for`-Schleife verwendet, die alle 12 Räume mit dem generischen Titel `Termin ${i}` (also „Termin 1" bis „Termin 12") befüllt:
++ Hinweis wenn von der Darstellung in diesem Plan geredet wird ist damit das SVG auf der linken Seite der WEbsite gemeint.
 
-```js
-for (let i = 1; i <= 12; i++) {
-    testEvents.push({
-        id: itemId++,
-        title: `Termin ${i}`,   // <-- Problem: nichts sagender Name
-        start: start,
-        end: end,
-        extendedProps: {
-            room: rooms[i - 1]
-        }
-    });
-}
-```
+## Neue Anforderungen
 
-Alle 12 Räume haben dieselbe Startzeit (10:00) und Endzeit (12:00) – das ist für Testzwecke unrealistisch.
+### Darstellung
 
-### Was ist schon gut (TAG 1–6)
-Ab TAG 1 werden sprechende, reale Terminbezeichnungen verwendet:
-- „Konferenz Vormittag", „Workshop Nachmittag"
-- „Vereinsfeier", „Kegelturnier"
-- „Große Firmenfeier", „Schulung", „Vorstandssitzung"
-- „Hochzeit", „Kinderbetreuung", „Frühschoppen", „Ausstellung"
++ man soll jetzt in der Lage sein die Darstellung sich dynamisch anzeigen zu lassen, man kann also auswählen ob man nur das OG, EG, UG oder alles gleichzeitig sehen will also genau so wie es gerade der Fall ist. Man sollte das ganze einfach simpel über 4 knöpfe neber der Darstellung auswählen können. die Räume sind wie folgt geglieder.
++ OG: Kolpingzimmer, Gaalbernstube, Galerie
++ EG: Landernau, Neustadt, Foyer, Gasstätte, Hessisches Kegelspiel, Hauptsaal, Wintergarten
++ UG: Kegelbahn 1, Kegelbahn 2.
 
-Diese Daten sind bereits gut und bleiben **unverändert**.
++ Farben: Termine haben verschieden Farben je nachdem von welchem Accounttyp sie erstellt wurden müssen sie mit folgender Frabe im Kalender und in der Darstellung gezeigt werden: Normale Termine(von Stadt-Mitarbeitern) Blau, Termine von Gastro-Mitarbeitern Gelb. Tipp die Rollen werden im nacher im Plan nochmal genauer beschreiben.
+## restliche Anforderungen
++ Filter Funktion
+    + Simple Filter Funktion die es einem erstmal erlaubt nur Termnine im Kalender und in der Darstellung zu sehen die von den beiden Account typen gemacht wurden
+    + also mann kann einfach filtern will ich nur die Termine von Gastro-Mitarbeitern, Stadt-Mitarbeitern oder beide gleichzeitig sehen
++ Login-System/ Accounts mit verschiedenen Berechtigungen
+    + es soll bevor man irgendwelche Termine hat einen simplen Login mit Name und Passwort geben diese Accounts sollen dann noch eine von 2 Rollen haben
+        + Rolle 1: Stadt-Mitarbeiter -> kann alles machen also Termine erstellen löschen etc. es werden nach Login aber erstmal auch nur Termine angezeigt die auch von Accounts vom Typ Stadt-Mitarbeiter gemacht wurden angezeigt, mit der Filter Funktion kann man dann einstellen das man ebenfalls die Termine von Gastro-Mitarbeitern sieht
+        + Rolle 2: Gastro-Mitarbeiter: können auch Termine erstellen aber keine Löschen. Wenn sie sich einloggen werden automatisch alle Termine angzeigt, sie können aber auch die Filter Funktion verwenden.
 
-### Modal-Testdaten (Zeilen 147–151)
-Beim Klick auf einen Termin werden im Modal folgende Testdaten befüllt:
-- **Bestuhlung**: „U-Form" → bleibt, ist sinnvoll
-- **Notizen**: Enthält `info.event.title` am Ende (wird durch bessere Titel automatisch besser)
-- **Mieter**: „Max Mustermann" → bleibt
-- **Personenanzahl**: 42 → bleibt
-- **Serientermin**: true → bleibt
++ Termine müssen in mehreren Räumen gleichzeitig stattfinden können -> das heißt im Kalender müssen die Termine zussammen dargestellt werden links in der Darstellung würde ich jedoch erstmal bei der Dartsellung bleiben, dass die Termine mit Uhrzeit und name in beiden Räumen angezeigt wird dann halt nur mit gleichen farben dazu kommen wir aber gleich noch im detail
 
----
 
-## Geplante Änderungen
++ Termine brauchen neue eigenschaften bzw es müssen eigenschaften angepasst werden:
+    + Eigenschaft Vertrag muss hinzugefügt werden mann muss erst eine checkbox anklicken, ob ein Vertrag vorhanden ist, dann kann man in einem Dropown Menü auswählen ob er erstellt gesendet oder unterschreiben ist
+    + Mieter sollte zu Ansprechpartner unbenannt werden, dann muss dannach zwei felder kommen von den mindestens eins einen gültigen eintrag haben muss und zwar Email des Ansprechpartners oder Telefonnummer des Ansprechpartners
+    + Es wird ein login-System mit Accounts geben, wenn jemand ein Termin erstellt muss automatisch gespeichert werden von welcher Person der Termin erstellt wurde und genau wann er erstellt wurde
 
-### Ziel
-Die `for`-Schleife für TAG 0 durch **12 individuelle, realistische Termineinträge** ersetzen – passend zum jeweiligen Raum des Kolpinghauses Hünfeld.
++ aktivitäten Feature im Headre der Website sollte eine Glocke sein wenn man auf sie klickt kann man die letzen aktivitäten sehen damit ist folgendes gemeint: Hier wird kurz aufgelistet werlcher Account was für einen Termin hinzugefügt, modifiziert oder gelöscht hat. könnte z.B. so aussehen: Tim hat den Termin Trainsabend SKC am 20.09.2026 bearbeitetet am 10.09. um 12 Uhr.
 
-### Neue Termine für TAG 0 (Heute)
+## Constraints
 
-| # | Raum                  | Neuer Titel                    | Uhrzeit       |
-|---|-----------------------|--------------------------------|---------------|
-| 1 | Kolpingzimmer         | Vorstandssitzung Kolpingwerk   | 09:00–11:00   |
-| 2 | Gaalbernstube         | Besprechung Stadtrat           | 10:00–12:00   |
-| 3 | Galerie               | Kunstausstellung Aufbau        | 08:00–12:00   |
-| 4 | Landernau             | Erste-Hilfe-Kurs               | 09:00–13:00   |
-| 5 | Neustädt              | Vereinssitzung DRK             | 10:00–12:00   |
-| 6 | Foyer                 | Informationsstand Bürger       | 09:00–17:00   |
-| 7 | Gastätte              | Mittagstisch Senioren          | 11:30–14:00   |
-| 8 | Hessisches Kegelspiel | Trainingsabend SKC             | 10:00–12:00   |
-| 9 | Hauptsaal             | Chorprobe Liederkranz          | 09:30–11:30   |
-|10 | Wintergarten          | Kaffeerunde Kolpingsfamilie    | 10:00–12:00   |
-|11 | Kegelbahn 1           | Ligaspiel Kegelclub            | 10:00–12:00   |
-|12 | Kegelbahn 2           | Juniorentraining Kegeln        | 10:00–12:00   |
++ wir verwenden Aktuell die JS-Bibliothek FullCalendar es dürfen auf gar keinen Fall Premium features davon verwendet werden nur die die in der Standart version vorhanden sind. Falls die genannten Features nicht möglich sind mit den standart Features gebe mir bitte Bescheid
 
-### Art der Änderung
-- Die `for`-Schleife (Zeilen 31–41) wird durch **12 einzelne `addTestEvent()`-Aufrufe** ersetzt (gleiche Struktur wie TAG 1–6).
-- Uhrzeiten werden leicht variiert, um realistische Überschneidungen zu simulieren.
-- Die Hilfsfunktion `addTestEvent()` wird **nicht verändert**.
-- Alle Funktionen (Modal, SVG-Update, Kalender-Rendering) bleiben **vollständig unberührt**.
 
-### Was sich NICHT ändert
-- Keine Änderungen an der Logik
-- Keine Änderungen an HTML oder CSS
-- Keine Änderungen an den Terminen TAG 1–6
-- Keine Änderungen an Modal-Feldern (Mieter, Bestuhlung etc.)
+
+## Vorgehen
+
+Das ganze soll wie gesagt noch keine klassische WebApp mit Backend/Datenbank usw. sein sondern erstmal ein Prototyp mit dem aber mein kunden schonmal in einer live-Demo arbeiten können. Später sollten wir aber in der Lage sein mit nicht alzu vielen anpasungen daruas ein echte WebApp zu bauen..
+
+Erstelle zuerst einen Plan namens VibeCodePlan.md indem du genau beschreibst wie du diese Features umsetzen würst. Du kannst auch gerne noch Fragen stellen fals einzelheiten noch nicht klar sind.
